@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState, useEffect } from "react";
-import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer, ReferenceLine, BarChart, Bar} from "recharts";
+import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer, ReferenceLine, BarChart, Bar, PieChart, Pie, Cell, Legend } from "recharts";
 import { motion } from "framer-motion";
 import { useSensorRealtime, type SensorDataEntry, } from "@/lib/useSensorRealtime";
 
@@ -195,6 +195,7 @@ export default function RealtimeDashboard({
         <div className="grid grid-cols-1 gap-4 mb-6">
           <ChartCard title="CH2O (24h)" unit="ppm" data={data} />
           <BarChartCard title="CH2O Bars" unit="ppm" data={data} />
+          <PieChartCard title="CH2O Levels (%)" data={data} />
         </div>
 
         <motion.div
@@ -365,6 +366,75 @@ function BarChartCard({
             <ReferenceLine y={DANGER_LIMIT} stroke="#ef4444" strokeDasharray="4 6" />
             <Bar dataKey="ch2o_ppm" fill="#38bdf8" radius={[4, 4, 0, 0]} />
           </BarChart>
+        </ResponsiveContainer>
+      </div>
+    </motion.div>
+  );
+}
+
+function PieChartCard({
+  title,
+  data,
+}: {
+  title: string;
+  data: Array<SensorDataEntry & { ch2o_ppm?: number; level?: string }>;
+}) {
+  const pieData = useMemo(() => {
+    const counts = { safe: 0, warning: 0, danger: 0 };
+    for (const row of data) {
+      if (row.level === "safe") counts.safe += 1;
+      else if (row.level === "warning") counts.warning += 1;
+      else if (row.level === "danger") counts.danger += 1;
+    }
+
+    const total = counts.safe + counts.warning + counts.danger;
+    if (total === 0) return [];
+
+    return [
+      { name: "Safe", value: (counts.safe / total) * 100, raw: counts.safe, color: "#34d399" },
+      { name: "Warning", value: (counts.warning / total) * 100, raw: counts.warning, color: "#fbbf24" },
+      { name: "Danger", value: (counts.danger / total) * 100, raw: counts.danger, color: "#f43f5e" },
+    ].filter((x) => x.raw > 0);
+  }, [data]);
+
+  return (
+    <motion.div className="p-4 rounded-xl bg-[#061017] border border-[#112034] shadow-md">
+      <div className="text-xs text-slate-400">{title}</div>
+      <div className="text-sm text-slate-300 mb-3">Distribution by percentage</div>
+
+      <div style={{ width: "100%", height: 280 }}>
+        <ResponsiveContainer>
+          <PieChart>
+            <Pie
+              data={pieData}
+              dataKey="value"
+              nameKey="name"
+              cx="50%"
+              cy="50%"
+              outerRadius={90}
+              label={({ name, value }) => `${name} ${Number(value).toFixed(1)}%`}
+            >
+              {pieData.map((entry) => (
+                <Cell key={entry.name} fill={entry.color} />
+              ))}
+            </Pie>
+            <Tooltip
+              formatter={(value, _name, item) => {
+                const num =
+                  typeof value === "number"
+                    ? value
+                    : Number(Array.isArray(value) ? value[0] : value ?? 0);
+
+                const raw = Number((item?.payload as { raw?: number } | undefined)?.raw ?? 0);
+                const label = (item?.payload as { name?: string } | undefined)?.name ?? "Level";
+
+                return [`${num.toFixed(1)}% (${raw} readings)`, label];
+              }}
+              contentStyle={{ background: "#071327", border: "1px solid #13314a" }}
+              itemStyle={{ color: "#fff" }}
+            />
+            <Legend />
+          </PieChart>
         </ResponsiveContainer>
       </div>
     </motion.div>
