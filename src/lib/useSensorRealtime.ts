@@ -52,7 +52,15 @@ function mapRow(row: SensorRow): SensorDataEntry {
     ch2o_ppm: Number.isFinite(ppm) ? ppm : 0,
     level: normalizeLevel(row.level, Number.isFinite(ppm) ? ppm : 0),
     created_at: created,
-    time: dt ? dt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "--:--",
+    time: dt 
+      ? dt.toLocaleTimeString("en-PH", { 
+          hour: "2-digit", 
+          minute: "2-digit",  
+          second: "2-digit", 
+          hour12: false, 
+          timeZone: "Asia/Manila",
+        }) 
+      : "--:--",
   };
 }
 
