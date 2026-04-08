@@ -54,6 +54,19 @@ export default function RealtimeDashboard({
     ? new Date(latest.created_at as string).getTime()
     : null;
 
+  const [visibleRows, setVisibleRows] = useState(10);  
+  const rowOptions = [10, 25, 50, 100, 200].filter(
+    (n) => n === 10 || n <= data.length
+  );
+
+  useEffect(() => {
+    if (rowOptions.length === 0) return;
+  
+    if (!rowOptions.includes(visibleRows)) {
+      setVisibleRows(rowOptions[rowOptions.length - 1]); // highest valid option
+    }
+  }, [rowOptions, visibleRows]);
+    
   const [now, setNow] = useState<number | null>(null);
 
   useEffect(() => {
@@ -68,7 +81,7 @@ export default function RealtimeDashboard({
   const diffSeconds =
     lastUpdate && now ? Math.max(0, Math.floor((now - lastUpdate) / 1000)) : null;
 
-  const OFFLINE_THRESHOLD_SECONDS = 60; // try 45-60
+  const OFFLINE_THRESHOLD_SECONDS = 60; // 1 min before it's considered offline
   const isOnline = diffSeconds !== null && diffSeconds < OFFLINE_THRESHOLD_SECONDS;
 
   const formatRelativeTime = (timestamp: number, currentTimestamp: number) => {
@@ -191,9 +204,19 @@ export default function RealtimeDashboard({
           <div className="flex items-center justify-between mb-3">
             <div>
               <div className="text-xs text-slate-400">Recent readings</div>
-              <div className="text-sm text-slate-300">Latest 10 sensor rows</div>
+              <div className="text-sm text-slate-300">Latest {visibleRows} sensor rows</div>
             </div>
-            <div className="text-xs text-slate-400">Local time</div>
+            <select
+              value={visibleRows}
+              onChange={(e) => setVisibleRows(Number(e.target.value))}
+              className="bg-[#0f1724] border border-[#122033] rounded-md px-2 py-1 text-xs"
+            >
+              {rowOptions.map((n) => (
+                <option key={n} value={n}>
+                  Show {n}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="overflow-x-auto">
@@ -207,7 +230,7 @@ export default function RealtimeDashboard({
               </thead>
               <tbody>
                 {data
-                  .slice(-10)
+                  .slice(-visibleRows)
                   .reverse()
                   .map((r, i) => (
                     <tr
