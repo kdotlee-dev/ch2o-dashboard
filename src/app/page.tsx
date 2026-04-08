@@ -54,19 +54,19 @@ export default function RealtimeDashboard({
     ? new Date(latest.created_at as string).getTime()
     : null;
 
-  const [visibleRows, setVisibleRows] = useState(10);  
+  const [visibleRows, setVisibleRows] = useState(10);
   const rowOptions = [10, 25, 50, 100, 200].filter(
     (n) => n === 10 || n <= data.length
   );
 
   useEffect(() => {
     if (rowOptions.length === 0) return;
-  
+
     if (!rowOptions.includes(visibleRows)) {
       setVisibleRows(rowOptions[rowOptions.length - 1]); // highest valid option
     }
   }, [rowOptions, visibleRows]);
-    
+
   const [now, setNow] = useState<number | null>(null);
 
   useEffect(() => {

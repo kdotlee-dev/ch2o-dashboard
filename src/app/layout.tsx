@@ -15,6 +15,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "CH2O Dashboard",
   description: "Real-time formaldehyde monitoring via cloud dashboard",
+  icons: {
+    icon: "/Formaldehyde.png",
+  },
 };
 
 export default function RootLayout({
