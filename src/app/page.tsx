@@ -103,7 +103,8 @@ export default function RealtimeDashboard({
         >
           <div>
             <h1 className="text-2xl md:text-3xl font-bold tracking-wide text-white">
-              CH2O Monitoring — <span className="text-indigo-400">Realtime</span>
+              {/* CH2O Monitoring — <span className="text-indigo-400">Realtime</span> */}
+              <span className="text-indigo-400">CH2O</span> Realtime Monitor
             </h1>
             <p className="text-sm text-slate-400 mt-1">
               ESP32 • ZE08-CH2O • Supabase · Realtime
