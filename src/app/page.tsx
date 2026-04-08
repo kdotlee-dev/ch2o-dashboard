@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState, useEffect } from "react";
-import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer, ReferenceLine, } from "recharts";
+import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer, ReferenceLine, BarChart, Bar} from "recharts";
 import { motion } from "framer-motion";
 import { useSensorRealtime, type SensorDataEntry, } from "@/lib/useSensorRealtime";
 
@@ -194,6 +194,7 @@ export default function RealtimeDashboard({
 
         <div className="grid grid-cols-1 gap-4 mb-6">
           <ChartCard title="CH2O (24h)" unit="ppm" data={data} />
+          <BarChartCard title="CH2O Bars" unit="ppm" data={data} />
         </div>
 
         <motion.div
@@ -320,6 +321,50 @@ function ChartCard({
               dot={false}
             />
           </LineChart>
+        </ResponsiveContainer>
+      </div>
+    </motion.div>
+  );
+}
+
+function BarChartCard({
+  title,
+  unit,
+  data,
+}: {
+  title: string;
+  unit: string;
+  data: Array<SensorDataEntry & { ch2o_ppm?: number; level?: string }>;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.25 }}
+      className="p-4 rounded-xl bg-[#061017] border border-[#112034] shadow-md"
+    >
+      <div className="flex items-center justify-between mb-3">
+        <div>
+          <div className="text-xs text-slate-400">{title}</div>
+          <div className="text-sm text-slate-300">Bar view</div>
+        </div>
+        <div className="text-xs text-slate-400">{unit}</div>
+      </div>
+
+      <div style={{ width: "100%", height: 280 }}>
+        <ResponsiveContainer>
+          <BarChart data={data.slice(-40)} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
+            <CartesianGrid stroke="#0b2233" strokeDasharray="3 3" />
+            <XAxis dataKey="time" tick={{ fill: "#94a3b8", fontSize: 12 }} />
+            <YAxis tick={{ fill: "#94a3b8" }} />
+            <Tooltip
+              contentStyle={{ background: "#071327", border: "1px solid #13314a" }}
+              itemStyle={{ color: "#fff" }}
+            />
+            <ReferenceLine y={SAFE_LIMIT} stroke="#60a5fa" strokeDasharray="4 6" />
+            <ReferenceLine y={DANGER_LIMIT} stroke="#ef4444" strokeDasharray="4 6" />
+            <Bar dataKey="ch2o_ppm" fill="#38bdf8" radius={[4, 4, 0, 0]} />
+          </BarChart>
         </ResponsiveContainer>
       </div>
     </motion.div>
