@@ -78,7 +78,7 @@ export function useSensorRealtime(deviceId: string, initialLimit = 200) {
         .from("sensor_data")
         .select("id, device_id, ch2o_ppm, level, created_at")
         .eq("device_id", deviceId)
-        .order("created_at", { ascending: true })
+        .order("created_at", { ascending: false }) // newest first
         .limit(initialLimit);
 
       if (!mounted) return;
@@ -87,7 +87,7 @@ export function useSensorRealtime(deviceId: string, initialLimit = 200) {
         console.error("Initial sensor_data load error:", error);
         setData([]);
       } else {
-        setData((rows ?? []).map((r) => mapRow(r as SensorRow)));
+        setData(((rows ?? []) as SensorRow[]).reverse().map(mapRow)); // oldest->newest for UI
       }
 
       setLoading(false);

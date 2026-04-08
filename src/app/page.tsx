@@ -42,11 +42,11 @@ export default function RealtimeDashboard({
       data.length
         ? data[data.length - 1]
         : {
-            ch2o_ppm: 0,
-            level: "safe",
-            time: "--:--",
-            created_at: null,
-          },
+          ch2o_ppm: 0,
+          level: "safe",
+          time: "--:--",
+          created_at: null,
+        },
     [data]
   );
 
@@ -163,18 +163,16 @@ export default function RealtimeDashboard({
             <div className="text-xs text-slate-400">Device Status</div>
             <div className="flex items-center gap-3 mt-2">
               <span
-                className={`inline-block w-3 h-3 rounded-full shadow-sm ${
-                  isOnline ? "bg-emerald-400" : "bg-rose-500"
-                }`}
+                className={`inline-block w-3 h-3 rounded-full shadow-sm ${isOnline ? "bg-emerald-400" : "bg-rose-500"
+                  }`}
               />
               <div className="text-sm font-medium">
                 {isOnline
                   ? "Online"
-                  : `Offline (${
-                      lastUpdate && now
-                        ? formatRelativeTime(lastUpdate, now)
-                        : "--"
-                    })`}
+                  : `Offline (${lastUpdate && now
+                    ? formatRelativeTime(lastUpdate, now)
+                    : "--"
+                  })`}
               </div>
             </div>
           </motion.div>
