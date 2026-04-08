@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-
-=======
 # CH2O Realtime Monitor
 
 ## Supabase + Next.js + ESP32
@@ -22,4 +19,3 @@ This project is built to:
 - **Backend/Data:** Supabase (Postgres + Realtime + Auth optional)
 - **Device:** ESP32 (Wi-Fi sensor publisher)
 - **Realtime:** Supabase channel subscriptions
->>>>>>> 3fd6465 (initial commit)
