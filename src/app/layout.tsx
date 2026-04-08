@@ -13,9 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "IoT Formaldehyde Monitoring System",
-  description: 
-    "Real-time formaldehyde monitoring via cloud dashboard",
+  title: "CH2O Dashboard",
+  description: "Real-time formaldehyde monitoring via cloud dashboard",
 };
 
 export default function RootLayout({
