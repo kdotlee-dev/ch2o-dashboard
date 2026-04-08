@@ -1,21 +1,9 @@
 "use client";
 
 import { useMemo, useState, useEffect } from "react";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  CartesianGrid,
-  ResponsiveContainer,
-  ReferenceLine,
-} from "recharts";
+import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer, ReferenceLine, } from "recharts";
 import { motion } from "framer-motion";
-import {
-  useSensorRealtime,
-  type SensorDataEntry,
-} from "@/lib/useSensorRealtime";
+import { useSensorRealtime, type SensorDataEntry, } from "@/lib/useSensorRealtime";
 
 interface Props {
   deviceId?: string;
@@ -78,12 +66,13 @@ export default function RealtimeDashboard({
   }, []);
 
   const diffSeconds =
-    lastUpdate && now ? Math.floor((now - lastUpdate) / 1000) : null;
+    lastUpdate && now ? Math.max(0, Math.floor((now - lastUpdate) / 1000)) : null;
 
-  const isOnline = diffSeconds !== null && diffSeconds < 60;
+  const OFFLINE_THRESHOLD_SECONDS = 60; // try 45-60
+  const isOnline = diffSeconds !== null && diffSeconds < OFFLINE_THRESHOLD_SECONDS;
 
   const formatRelativeTime = (timestamp: number, currentTimestamp: number) => {
-    const diff = Math.floor((currentTimestamp - timestamp) / 1000);
+    const diff = Math.max(0, Math.floor((currentTimestamp - timestamp) / 1000));
     if (diff < 60) return `${diff} seconds ago`;
     if (diff < 3600) return `${Math.floor(diff / 60)} minutes ago`;
     if (diff < 86400) return `${Math.floor(diff / 3600)} hours ago`;
